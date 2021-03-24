@@ -1,23 +1,69 @@
 require 'csv'
+require 'pp'
 
-transposed = CSV.read('url_matrix.csv').transpose
+MATRIX = 'url_matrix.csv'
+TRANSPOSED_MATRIX = 'url_matrix_transposed.csv'
 
-CSV.open("url_matrix_transposed.csv", 'w') do |csv|
-    transposed.each do |row|
-        csv << row
+column_headers = CSV.open(TRANSPOSED_MATRIX, headers: true, header_converters: :symbol).read.headers
+
+email_versions = {}
+
+CSV.foreach(TRANSPOSED_MATRIX).with_index do |row, row_num|
+    
+    secondary_type = row[0]
+    
+    unless secondary_type.downcase.include? "url"
+        next
     end
+    
+    segment_parts = secondary_type.split("_")
+    secondary_segment = segment_parts[1]
+    url_type = segment_parts[2]
+
+    column_headers.each_with_index do |main_entity, col_num|
+
+        # initializes segment name
+        if email_versions[main_entity].nil?
+            email_versions[main_entity] = { secondary_segment => nil }
+        end
+
+        if email_versions[main_entity][secondary_segment].nil?
+            email_versions[main_entity][secondary_segment] = { url_type => row[col_num] }
+        
+        elsif !email_versions[main_entity][secondary_segment].has_key? url_type
+            email_versions[main_entity][secondary_segment].merge!(url_type => row[col_num])
+        end
+        # p email_versions[main_entity][secondary_segment][url_type]
+        # if email_versions[main_entity][secondary_segment][url_type].nil?
+        #     email_versions[main_entity][secondary_segment][url_type] = row[col_num]
+        # end
+        # p email_versions
+        # unless email_versions[main_entity][secondary_segment][url_type] == url_type
+        #     email_versions[main_entity][secondary_segment].merge!(url_type => row[col_num])
+        # end
+        # email_versions[main_entity][secondary_segment][url_type] = row[col_num]
+    end
+
 end
+p column_headers[1]
+pp email_versions[column_headers[1]]
 
-url_matrix = CSV.open 'url_matrix_transposed.csv', headers: true, header_converters: :symbol
 
-column_headers = url_matrix.read.headers
 
-url_matrix = CSV.open 'url_matrix_transposed.csv', headers: true, header_converters: :symbol
 
-url_type = []
 
-url_matrix.drop(1).each do |row|
-    url_type << row[0] if row[0].downcase.include? "url"
-end
 
-puts url_type
+# {
+#     main_entity_name: {
+#         audience_segment: {
+#             module_1: {
+#                 url_1: ___,
+#                 url_2: ___
+#             }
+
+#             module_2: {
+#                 url: ___
+#             }
+#         }
+#     }
+# }
