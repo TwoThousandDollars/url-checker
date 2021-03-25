@@ -1,8 +1,8 @@
 require 'csv'
 require 'pp'
 
-MATRIX = 'url_matrix.csv'
-TRANSPOSED_MATRIX = 'url_matrix_transposed.csv'
+MATRIX = 'csv/url_matrix.csv'
+TRANSPOSED_MATRIX = 'csv/url_matrix_transposed.csv'
 
 column_headers = CSV.open(TRANSPOSED_MATRIX, headers: true, header_converters: :symbol).read.headers
 
@@ -33,15 +33,7 @@ CSV.foreach(TRANSPOSED_MATRIX).with_index do |row, row_num|
         elsif !email_versions[main_entity][secondary_segment].has_key? url_type
             email_versions[main_entity][secondary_segment].merge!(url_type => row[col_num])
         end
-        # p email_versions[main_entity][secondary_segment][url_type]
-        # if email_versions[main_entity][secondary_segment][url_type].nil?
-        #     email_versions[main_entity][secondary_segment][url_type] = row[col_num]
-        # end
-        # p email_versions
-        # unless email_versions[main_entity][secondary_segment][url_type] == url_type
-        #     email_versions[main_entity][secondary_segment].merge!(url_type => row[col_num])
-        # end
-        # email_versions[main_entity][secondary_segment][url_type] = row[col_num]
+
     end
 
 end
