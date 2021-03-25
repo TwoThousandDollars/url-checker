@@ -1,6 +1,8 @@
 require 'mail'
 require 'dir'
 require 'uri'
+require 'net/http'
+require 'final_redirect_url'
 
 PATH_TO_EMAILS = './email/'
 BLOCKED_URL_TYPES = ['.png', '.gif', '.jpg']
@@ -26,4 +28,6 @@ dirty_urls = URI.extract(email.parts[0].decoded, ['http', 'https']).select { |ur
 
 clean_urls = filter_dirty_urls(dirty_urls)
 
-puts clean_urls
+first_redirect = FinalRedirectUrl.final_redirect_url(clean_urls[1])
+
+# p first_redirect.class
