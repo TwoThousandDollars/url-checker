@@ -1,6 +1,6 @@
 require_relative "email_parser"
 
-class Email
+class NationwideEmail
     def initialize(email_path, urls)
 
         # TODO()
