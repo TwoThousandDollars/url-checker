@@ -43,8 +43,6 @@ pp email_versions[column_headers[1]]
 
 
 
-
-
 # {
 #     main_entity_name: {
 #         audience_segment: {
