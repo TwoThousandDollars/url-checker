@@ -7,7 +7,7 @@ require 'final_redirect_url'
 require 'thread'  # for Mutex
 
 module Url
-    BLOCKED_URL_TYPES = ['.png', '.gif', '.jpg', 'pixel.monitor']
+    BLOCKED_URL_TYPES = ['.png', '.gif', '.jpg', 'pixel.monitor', 'open.aspx']
     THREAD_COUNT = 5  # tweak this number for maximum performance.
     MATRIX = 'csv/url_matrix.csv'
     TRANSPOSED_MATRIX = 'csv/url_matrix_transposed.csv'
@@ -90,16 +90,19 @@ module Url
         return all_urls.flatten.compact
     end
 
+    def get_final_urls(email)
+        dirty_urls = URI.extract(email, ['http', 'https']).select { |url| !BLOCKED_URL_TYPES.include? url }
+        clean_urls = filter_dirty_urls(dirty_urls)
+        get_final_redirected_urls(clean_urls)
+    end
 
 
-    # get_final_redirected_urls(clean_urls)
+
 
 
 
     # p first_redirect.class
 
 
-    # dirty_urls = URI.extract(email.parts[0].decoded, ['http', 'https']).select { |url| !BLOCKED_URL_TYPES.include? url }
 
-    # clean_urls = filter_dirty_urls(dirty_urls)
 end

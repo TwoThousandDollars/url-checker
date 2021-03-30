@@ -20,6 +20,8 @@ include Url
         # CREATE AN EMAIL OBJECT AND TEST THAT IT CAN PROPERLY EXTRACT AUDIENCE INFO FROM SL
         
         @email_path = email_path
+
+        @text_content = Mail.read(@email_path).text_part.decoded
         
         @full_audience_segment = get_full_audience_segment(@email_path)
         
@@ -32,7 +34,8 @@ include Url
         @subject_line = @full_audience_segment[3]
         
         @matrix_urls = get_matrix_urls
-        @final_urls = ''
+        
+        # @final_urls = get_final_urls(@text_content)
 
     end
 
