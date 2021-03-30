@@ -11,7 +11,7 @@ include Url
                     :module_1, 
                     :module_2, 
                     :subject_line, 
-                    :reference_urls, 
+                    :matrix_urls, 
                     :final_urls
 
     def initialize(email_path)
@@ -31,21 +31,25 @@ include Url
 
         @subject_line = @full_audience_segment[3]
         
-        @reference_urls = fetch_urls_from_matrix
+        @matrix_urls = get_matrix_urls
         @final_urls = ''
 
     end
 
-    def get_final_urls 
-
-    end
-
+    
     private
+
+    def get_matrix_urls 
+        fetch_urls_from_matrix(@main_entity_name, @module_1, @module_2)
+    end
 
     def get_full_audience_segment(email_file_name)
         audience_array = email_file_name.split(/\-MainEntity\-|\-M\d\-|\-proof\]\s/)
         audience_array.slice! 0
-        audience_array.first(3).each {|i| i.downcase! }
+        audience_array.first(3).each do |i| 
+            i.downcase!
+            i.tr(" ", "_")
+        end
         audience_array[3].slice! ".eml"
         return audience_array
     end

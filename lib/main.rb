@@ -9,4 +9,4 @@ all_emails = Dir["#{PATH_TO_EMAILS}*.eml"]
 
 email = NationwideEmail.new(all_emails[0])
 
-puts email.full_audience_segment
+puts email.matrix_urls

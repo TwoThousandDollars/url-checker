@@ -2,6 +2,7 @@ require 'mail'
 require 'dir'
 require 'uri'
 require 'net/http'
+require 'pp'
 require 'final_redirect_url'
 require 'thread'  # for Mutex
 
@@ -44,7 +45,8 @@ module Url
 
     end
 
-    def fetch_urls_from_matrix(matrix=TRANSPOSED_MATRIX, email_versions = {})
+    def fetch_urls_from_matrix(main_entity_name, mod1, mod2, matrix=TRANSPOSED_MATRIX)
+        email_versions = {}
         column_headers = CSV.open(TRANSPOSED_MATRIX, headers: true, header_converters: :symbol).read.headers
         CSV.foreach(matrix).with_index do |row, row_num|
             
@@ -55,8 +57,11 @@ module Url
             end
             
             segment_parts = secondary_type.split("_")
-            secondary_segment = segment_parts[1]
-            url_type = segment_parts[2]
+            secondary_segment = segment_parts[1].downcase!
+            secondary_segment = secondary_segment.tr(" ", "_")
+
+            url_type = segment_parts[2].downcase!
+            url_type = url_type.tr(" ", "_")
 
             column_headers.each_with_index do |main_entity, col_num|
 
@@ -75,7 +80,14 @@ module Url
             end
 
         end
-        return email_versions
+        return get_urls_by_audience_segment(email_versions, main_entity_name, mod1, mod2)
+    end
+
+    def get_urls_by_audience_segment(versions, main_entity_name, mod1, mod2)
+        all_urls = []
+        all_urls << versions[main_entity_name.to_sym][mod1].values
+        all_urls << versions[main_entity_name.to_sym][mod2].values
+        return all_urls.flatten.compact
     end
 
 
