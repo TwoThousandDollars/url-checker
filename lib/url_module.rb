@@ -93,16 +93,20 @@ module Url
     def get_final_urls(email)
         dirty_urls = URI.extract(email, ['http', 'https']).select { |url| !BLOCKED_URL_TYPES.include? url }
         clean_urls = filter_dirty_urls(dirty_urls)
-        get_final_redirected_urls(clean_urls)
+        remove_duplicated_mobile_urls(get_final_redirected_urls(clean_urls))
     end
 
+    def remove_duplicated_mobile_urls(final_urls, result=[], duplicated_urls=[])
+        final_urls = final_urls.reject { |url| url.empty? }
+        final_urls.each do |url|
+            duplicated_urls << url if final_urls.count(url) > 2
+        end
 
-
-
-
-
-    # p first_redirect.class
-
-
+        if duplicated_urls.empty?
+            return final_urls.uniq
+        else
+            return final_urls.uniq + duplicated_urls
+        end
+    end
 
 end
